@@ -21,6 +21,11 @@ public class EndpointVerticleTest {
   private static Vertx vertx;
   private int port = Integer.getInteger("http.port", 8080);
 
+  /**
+   * Method that sets the necesary to perform the unit tests.
+   *
+   * @param ctx
+   */
    @Before
   public void setUp(TestContext ctx) {
     log.info("Iniciando prueba");
@@ -30,12 +35,27 @@ public class EndpointVerticleTest {
     vertx.deployVerticle(EndpointVerticle.class.getName());
   }
 
+   /**
+    * Method that restores the enviroment after all the tests
+    * are completed.
+    * @param ctx
+    */
    @After
   public void down(TestContext ctx) {
     log.info("Terminando el test");
     vertx.close(ctx.asyncAssertSuccess());
   }
 
+   /**
+    * Integration test with the Scenario
+    *
+    * SCENARIO: UpdateLevelById
+    * GIVEN a valid countryId
+    * WHEN execute the call to channles_ale endpoint
+    * THEN Return a json with the information of channels fields
+    * 1. test that the response is NOT NULL
+    * @param cxt
+    */
    @Test
   public void testRESTMethodsAle(TestContext ctx) {
     Async async = ctx.async();
@@ -49,6 +69,16 @@ public class EndpointVerticleTest {
     });
   }
 
+   /**
+    * Integration test with the Scenario
+    *
+    * SCENARIO: UpdateLevelById
+    * GIVEN a valid countryId
+    * WHEN execute the call to channles_juan endpoint
+    * THEN Return a json with the information of channels fields
+    * 1. test that the response is NOT NULL
+    * @param cxt
+    */
    @Test
    public void testRESTMethodsJuan(TestContext ctx) {
      Async async = ctx.async();

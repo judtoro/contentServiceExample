@@ -4,6 +4,8 @@
 package com.fox.platform.cntsrvex.infra.util;
 
 /**
+ * Class that handle the creation of queries.
+ *
  * @author alejandra.ramirez
  *
  */

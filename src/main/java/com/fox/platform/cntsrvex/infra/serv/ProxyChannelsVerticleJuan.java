@@ -8,7 +8,13 @@ import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 
-
+/**
+ *
+ * Proxy verticle to perform queries over Omnix
+ *
+ * @author juan.toro
+ *
+ */
 public class ProxyChannelsVerticleJuan extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger();

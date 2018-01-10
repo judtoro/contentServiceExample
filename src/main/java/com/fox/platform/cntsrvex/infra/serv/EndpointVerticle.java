@@ -7,7 +7,16 @@ import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.ext.web.Router;
 
-
+/**
+ * Verticle exposing a REST api to get channels info from Omnix
+ *
+ *  1. Get channels (Alejandra implementation): /channels_ale?countryId={country}
+ *  2. Get channels (Juan implementation): /channels_juan?countryId={country}
+ *
+ * @author juan.toro
+ * @author alejandra.ramirez
+ *
+ */
 public class EndpointVerticle extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger();

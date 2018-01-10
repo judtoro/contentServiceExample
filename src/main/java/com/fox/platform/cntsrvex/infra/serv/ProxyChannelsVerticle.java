@@ -12,6 +12,13 @@ import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.client.WebClient;
 
 
+/**
+ *
+ * Proxy verticle to perform queries over Omnix
+ *
+ * @author alejandra.ramirez
+ *
+ */
 public class ProxyChannelsVerticle extends AbstractVerticle {
 
   private static final Logger logger = LogManager.getLogger();
@@ -42,6 +49,12 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
     }
   }
 
+  /**
+   * Method used to call Omnix.
+   *
+   * @param jsonObj: Json send whith the request.
+   * @param resultObj: Future to handle the response.
+   */
   private void doPetition(JsonObject jsonObj, final Future<JsonObject> resultObj) {
     WebClient webclient = WebClient.create(vertx);
 
@@ -59,6 +72,13 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
         });
   }
 
+  /**
+   * Method to handle the response from Omnix.
+   * It uses the json object
+   *
+   * @param message: Message object used to reply the response from Omnix.
+   * @return
+   */
   private Future<JsonObject> processResponse(Message<String> message) {
 
     final Future<JsonObject> resultObj = Future.future();
@@ -79,6 +99,13 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
     return resultObj;
   }
 
+  /**
+   * Method to handle the response from Omnix.
+   * It uses the JsonPath library.
+   *
+   * @param message: Message object used to reply the response from Omnix.
+   * @return
+   */
   public Future<JsonObject> jsonPathResponse(Message<String> message) {
 
     final Future<JsonObject> resultObj = Future.future();

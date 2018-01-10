@@ -14,6 +14,13 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
+/**
+ * Endpoint handlers implementation.
+ *
+ * @author juan.toro
+ * @author alejandra.ramirez
+ *
+ */
 public class HandlersChannelImpl {
 
   private static Logger logger = LogManager.getLogger();

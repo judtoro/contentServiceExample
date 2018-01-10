@@ -1,5 +1,12 @@
 package com.fox.platform.cntsrvex.dom.ent;
 
+/**
+ *
+ * Fields of the json response
+ *
+ * @author juan.toro
+ *
+ */
 public enum JsonFields {
 	HITS_OBJECT("hits"),
 	HITS_ARRAY("hits"),
@@ -10,7 +17,9 @@ public enum JsonFields {
 	FIELDS("fields"),
 	NAME("name"),
     ID("id");
+
 	private String fieldName;
+
 	private JsonFields(String fieldName) {
 		this.fieldName = fieldName;
 	}
