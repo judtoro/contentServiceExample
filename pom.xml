@@ -11,7 +11,7 @@
     <url>https://github.com/judtoro/contentServiceExample</url>
 
     <properties>
-        <libs.version>3.1-SNAPSHOT</libs.version>
+        <libs.version>5.0</libs.version>
 
         <vertx.version>3.4.1</vertx.version>
         <commons-io.version>2.5</commons-io.version>
