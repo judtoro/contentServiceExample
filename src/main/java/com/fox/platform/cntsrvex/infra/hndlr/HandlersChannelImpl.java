@@ -1,15 +1,13 @@
 package com.fox.platform.cntsrvex.infra.hndlr;
 
-import java.util.Map;
 import java.util.Optional;
-import com.fox.platform.cntsrvex.dom.ent.JsonFields;
 import com.fox.platform.cntsrvex.infra.exc.RequestException;
+import com.google.inject.Inject;
 import com.newrelic.agent.deps.org.apache.http.HttpStatus;
 import com.newrelic.agent.deps.org.apache.http.entity.ContentType;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.EncodeException;
-import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -22,17 +20,18 @@ import io.vertx.ext.web.RoutingContext;
  * @author alejandra.ramirez
  *
  */
-public class HandlersChannelImpl {
+public class HandlersChannelImpl implements HandlersChannel {
 
   private static Logger logger = LoggerFactory.getLogger(HandlersChannelImpl.class);
 
   private Vertx vertx;
 
+  @Inject
   public HandlersChannelImpl(Vertx vertx) {
     this.vertx = vertx;
   }
 
-  public static void getChannelsPost(RoutingContext routingContext) {
+  public void getChannelsPost(RoutingContext routingContext) {
     try {
       logger.info(routingContext.getBodyAsString());
 
@@ -56,6 +55,7 @@ public class HandlersChannelImpl {
    *
    * @param routingContext
    */
+  @Override
   public void getChannelsAle(RoutingContext routingContext) {
     try {
 
@@ -88,6 +88,12 @@ public class HandlersChannelImpl {
     }
   }
 
+  /**
+   * Get channel list
+   *
+   * @param routingContext
+   */
+  @Override
   public void getChannelsJuan(RoutingContext routingContext) {
     try {
 
@@ -102,8 +108,7 @@ public class HandlersChannelImpl {
         if (resp.succeeded()) {
           logger.info("When print !!! " + resp.result().body());
           routingContext.response().setStatusCode(HttpStatus.SC_OK);
-          routingContext.response()
-              .end(getFields(new JsonObject(resp.result().body().toString())).toString());
+          routingContext.response().end(resp.result().body().toString());
         } else {
           logger.error("Error trying to reach Omnix!", resp.cause());
         }
@@ -121,42 +126,4 @@ public class HandlersChannelImpl {
     }
   }
 
-
-  public JsonArray getFields(JsonObject json) {
-
-    JsonArray fields = new JsonArray();
-
-    try {
-      JsonObject hitsObj = json.getJsonObject(JsonFields.HITS_OBJECT.getFieldName());
-      JsonArray hitsArray = hitsObj.getJsonArray(JsonFields.HITS_ARRAY.getFieldName());
-
-
-      if (hitsArray == null) {
-        return fields;
-      }
-
-      hitsArray.stream().forEach(obj -> {
-        JsonObject jsonHit = (JsonObject) obj;
-        jsonHit.getJsonObject(JsonFields.INNER_HITS.getFieldName(), new JsonObject())
-            .getJsonObject(JsonFields.GROUPS.getFieldName(), new JsonObject())
-            .getJsonObject(JsonFields.HITS_OBJECT.getFieldName(), new JsonObject())
-            .getJsonArray(JsonFields.HITS_ARRAY.getFieldName(), new JsonArray()).stream()
-            .map(internalObject -> {
-              JsonObject jsonInternalHit = (JsonObject) internalObject;
-
-              Map<String, Object> fieldsMap =
-                  jsonInternalHit.getJsonObject(JsonFields.SOURCE.getFieldName(), new JsonObject())
-                      .getJsonObject(JsonFields.FIELDS.getFieldName(), new JsonObject()).getMap();
-
-              return new JsonObject(fieldsMap);
-            }).forEach(fields::add);
-      });
-
-
-
-    } catch (Exception ex) {
-      logger.error("Error when parse data from Elastic: " + json.encode(), ex);
-    }
-    return fields;
-  }
 }

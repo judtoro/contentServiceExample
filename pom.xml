@@ -88,6 +88,13 @@
             <version>${vertx.version}</version>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Google GUICE -->
+        <dependency>
+			<groupId>com.google.inject</groupId>
+			<artifactId>guice</artifactId>
+			<version>4.1.0</version>
+		</dependency>
 
     </dependencies>
     <build>

@@ -1,8 +1,11 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
+import java.util.Map;
+import com.fox.platform.cntsrvex.dom.ent.JsonFields;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
+import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -58,7 +61,7 @@ public class ProxyChannelsVerticleJuan extends AbstractVerticle {
           .ssl(true).sendJson(json, response -> {
             if (response.succeeded()) {
               logger.info("Call Omnix Succeede!. Response: " + response.result().bodyAsString());
-              message.reply(response.result().bodyAsJsonObject());
+              message.reply(getFields(response.result().bodyAsJsonObject()));
             } else {
               logger.error("Call Omnix Fail", response.cause());
             }
@@ -69,5 +72,47 @@ public class ProxyChannelsVerticleJuan extends AbstractVerticle {
     }
   }
 
+  /**
+   * Process the response from Omnix
+   * @param json
+   * @return
+   */
+  public JsonArray getFields(JsonObject json) {
+
+    JsonArray fields = new JsonArray();
+
+    try {
+      JsonObject hitsObj = json.getJsonObject(JsonFields.HITS_OBJECT.getFieldName());
+      JsonArray hitsArray = hitsObj.getJsonArray(JsonFields.HITS_ARRAY.getFieldName());
+
+
+      if (hitsArray == null) {
+        return fields;
+      }
+
+      hitsArray.stream().forEach(obj -> {
+        JsonObject jsonHit = (JsonObject) obj;
+        jsonHit.getJsonObject(JsonFields.INNER_HITS.getFieldName(), new JsonObject())
+            .getJsonObject(JsonFields.GROUPS.getFieldName(), new JsonObject())
+            .getJsonObject(JsonFields.HITS_OBJECT.getFieldName(), new JsonObject())
+            .getJsonArray(JsonFields.HITS_ARRAY.getFieldName(), new JsonArray()).stream()
+            .map(internalObject -> {
+              JsonObject jsonInternalHit = (JsonObject) internalObject;
+
+              Map<String, Object> fieldsMap =
+                  jsonInternalHit.getJsonObject(JsonFields.SOURCE.getFieldName(), new JsonObject())
+                      .getJsonObject(JsonFields.FIELDS.getFieldName(), new JsonObject()).getMap();
+
+              return new JsonObject(fieldsMap);
+            }).forEach(fields::add);
+      });
+
+
+
+    } catch (Exception ex) {
+      logger.error("Error when parse data from Elastic: " + json.encode(), ex);
+    }
+    return fields;
+  }
 
 }

@@ -1,6 +1,9 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
+import com.fox.platform.cntsrvex.infra.dep.EndpointModule;
 import com.fox.platform.cntsrvex.infra.hndlr.HandlersChannelImpl;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.logging.Logger;
@@ -23,6 +26,9 @@ public class EndpointVerticle extends AbstractVerticle {
 
   private static final Logger logger = LoggerFactory.getLogger(EndpointVerticle.class);
 
+  @Inject
+  private HandlersChannelImpl handler;
+
   @Override
   public void start(Future<Void> startFuture) throws Exception {
 
@@ -42,7 +48,8 @@ public class EndpointVerticle extends AbstractVerticle {
 
   private Router getRouter() {
     Router router = Router.router(vertx);
-    HandlersChannelImpl handler = new HandlersChannelImpl(vertx);
+
+    Guice.createInjector(new EndpointModule(vertx)).injectMembers(this);
 
     // Routes
     router.get("/channels_ale").handler(handler::getChannelsAle);
