@@ -5,6 +5,7 @@ import java.util.Optional;
 import com.fox.platform.cntsrvex.dom.ent.JsonFields;
 import com.fox.platform.cntsrvex.infra.exc.RequestException;
 import com.newrelic.agent.deps.org.apache.http.HttpStatus;
+import com.newrelic.agent.deps.org.apache.http.entity.ContentType;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.EncodeException;
@@ -44,7 +45,8 @@ public class HandlersChannelImpl {
 
     } catch (EncodeException e) {
       routingContext.response().setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
+          .end(e.getMessage());
     }
   }
 
@@ -76,10 +78,12 @@ public class HandlersChannelImpl {
 
     } catch (RequestException e) {
       routingContext.response().setStatusCode(e.getCode())
-          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
+          .end(e.getMessage());
     } catch (Exception e) {
       routingContext.response().setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
+          .end(e.getMessage());
 
     }
   }
@@ -107,10 +111,12 @@ public class HandlersChannelImpl {
 
     } catch (RequestException e) {
       routingContext.response().setStatusCode(e.getCode())
-          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
+          .end(e.getMessage());
     } catch (Exception e) {
       routingContext.response().setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
+          .end(e.getMessage());
 
     }
   }
