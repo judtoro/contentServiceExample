@@ -46,12 +46,21 @@ public class EndpointVerticleTest {
     vertx.close(ctx.asyncAssertSuccess());
   }
 
+
   /**
+   * <pre>
    * Integration test with the Scenario
    *
-   * SCENARIO: UpdateLevelById GIVEN a valid countryId WHEN execute the call to channles_ale
-   * endpoint THEN Return a json with the information of channels fields 1. test that the response
+   * SCENARIO: UpdateLevelById
+   * GIVEN a valid countryId
+   * WHEN execute the call to channles_ale
+   * endpoint
+   * THEN Return a json with the information of channels fields
+   *
+   * 1. test that the response
+   *
    * is NOT NULL
+   * </pre>
    *
    * @param cxt
    */
@@ -62,18 +71,26 @@ public class EndpointVerticleTest {
     vertx.createHttpClient().getNow(port, "localhost", "/channels_ale?countryId='CO'", response -> {
       ctx.assertEquals(response.statusCode(), HttpStatus.SC_OK);
       response.bodyHandler(body -> {
-        ctx.assertEquals(body.toJsonArray().size(), 4);
+        ctx.assertNotNull(body.toJsonArray());
+        ctx.assertFalse(body.toJsonArray().isEmpty());
         async.complete();
       });
     });
   }
 
   /**
+   * <pre>
    * Integration test with the Scenario
    *
-   * SCENARIO: UpdateLevelById GIVEN a valid countryId WHEN execute the call to channles_juan
-   * endpoint THEN Return a json with the information of channels fields 1. test that the response
+   * SCENARIO: UpdateLevelById
+   * GIVEN a valid countryId
+   * WHEN execute the call to channles_juan endpoint
+   * THEN Return a json with the information of channels fields
+   *
+   * 1. test that the response
+   *
    * is NOT NULL
+   * </pre>
    *
    * @param cxt
    */
@@ -85,7 +102,8 @@ public class EndpointVerticleTest {
         response -> {
           ctx.assertEquals(response.statusCode(), HttpStatus.SC_OK);
           response.bodyHandler(body -> {
-            ctx.assertEquals(body.toJsonArray().size(), 4);
+            ctx.assertNotNull(body.toJsonArray());
+            ctx.assertFalse(body.toJsonArray().isEmpty());
             async.complete();
           });
         });
