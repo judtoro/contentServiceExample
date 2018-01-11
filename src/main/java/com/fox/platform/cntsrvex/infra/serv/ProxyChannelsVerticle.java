@@ -1,7 +1,6 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
 import com.fox.platform.cntsrvex.infra.util.QueryUtil;
-import com.jayway.jsonpath.JsonPath;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
@@ -98,25 +97,4 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
     return resultObj;
   }
 
-  /**
-   * Method to handle the response from Omnix. It uses the JsonPath library.
-   *
-   * @param message: Message object used to reply the response from Omnix.
-   * @return
-   */
-  public Future<JsonObject> jsonPathResponse(Message<String> message) {
-
-    final Future<JsonObject> resultObj = Future.future();
-    resultObj.setHandler(result -> {
-
-      Object expectResp = JsonPath.read(result.result().encode(),
-          "$.hits.hits[*].inner_hits.groups.hits.hits[*]._source.fields");
-
-      JsonArray resultJson = new JsonArray(expectResp.toString());
-      logger.info("Expected " + resultJson);
-
-      message.reply(resultJson);
-    });
-    return resultObj;
-  }
 }
