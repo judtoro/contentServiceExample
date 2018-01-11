@@ -59,10 +59,11 @@ public class HandlersChannelImpl implements HandlersChannel {
   public void getChannelsAle(RoutingContext routingContext) {
     try {
 
-      Optional<String> countryOpt =
-          Optional.ofNullable(routingContext.request().getParam("countryId"));
-      String countryId = countryOpt
+     String countryId =  Optional
+          .ofNullable(routingContext.request().getParam("countryId"))
           .orElseThrow(() -> new RequestException(HttpStatus.SC_BAD_REQUEST, "Bad countryId code"));
+
+
       logger.info("CountryId " + countryId);
 
       vertx.eventBus().send("get_channels_ale", countryId, resp -> {
@@ -97,9 +98,8 @@ public class HandlersChannelImpl implements HandlersChannel {
   public void getChannelsJuan(RoutingContext routingContext) {
     try {
 
-      Optional<String> countryOpt =
-          Optional.ofNullable(routingContext.request().getParam("countryId"));
-      String countryId = countryOpt
+      String countryId =  Optional
+          .ofNullable(routingContext.request().getParam("countryId"))
           .orElseThrow(() -> new RequestException(HttpStatus.SC_BAD_REQUEST, "Bad countryId code"));
       logger.info("CountryId " + countryId);
 
