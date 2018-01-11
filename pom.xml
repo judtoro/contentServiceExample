@@ -3,18 +3,23 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.fox.platform</groupId>
-    <artifactId>afa</artifactId>
-    <version>1.0</version>
+    <artifactId>contentServiceExample</artifactId>
+    <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>afa</name>
-    <url>https://github.com/FOXITES/BaselineVertx</url>
+    <name>contentServiceExample</name>
+    <url>https://github.com/judtoro/contentServiceExample</url>
 
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <vertx.version>3.4.1</vertx.version>
-        <newrelic.dropwizard.version>3.4.1</newrelic.dropwizard.version>
         <libs.version>3.1-SNAPSHOT</libs.version>
+
+        <vertx.version>3.4.1</vertx.version>
+        <commons-io.version>2.5</commons-io.version>
+        <junit.version>4.12</junit.version>
+
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
 
     <dependencies>
@@ -32,12 +37,6 @@
         </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>vertx-unit</artifactId>
-            <version>${vertx.version}</version>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.vertx</groupId>
             <artifactId>vertx-hazelcast</artifactId>
             <version>${vertx.version}</version>
         </dependency>
@@ -51,45 +50,18 @@
             <artifactId>vertx-config</artifactId>
             <version>${vertx.version}</version>
         </dependency>
-
-        <!-- LOG4J -->
         <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-api</artifactId>
-            <version>2.8.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-core</artifactId>
-            <version>2.8.2</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-slf4j-impl</artifactId>
-            <version>2.8.2</version>
+            <groupId>io.vertx</groupId>
+            <artifactId>vertx-dropwizard-metrics</artifactId>
+            <version>${vertx.version}</version>
         </dependency>
 
         <!-- UTILS -->
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.6</version>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${commons-io.version}</version>
         </dependency>
-
-        <!-- JUNIT -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
-            <groupId>com.fasterxml.jackson.dataformat</groupId>
-            <artifactId>jackson-dataformat-yaml</artifactId>
-            <version>2.3.0</version>
-        </dependency>
-
 
         <!-- Project Libs -->
         <dependency>
@@ -107,19 +79,21 @@
             <artifactId>launcher</artifactId>
             <version>${libs.version}</version>
         </dependency>
-        <!-- drop wizard -->
+
+        <!-- TEST -->
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>io.vertx</groupId>
-            <artifactId>vertx-dropwizard-metrics</artifactId>
-            <version>${newrelic.dropwizard.version}</version>
+            <artifactId>vertx-unit</artifactId>
+            <version>${vertx.version}</version>
+            <scope>test</scope>
         </dependency>
 
-        <!-- UTILS -->
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>2.5</version>
-        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -128,8 +102,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.3</version>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
                 </configuration>
             </plugin>
 

@@ -1,7 +1,5 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.fox.platform.cntsrvex.infra.util.QueryUtil;
 import com.jayway.jsonpath.JsonPath;
 import io.vertx.core.AbstractVerticle;
@@ -9,6 +7,8 @@ import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.client.WebClient;
 
 
@@ -21,7 +21,7 @@ import io.vertx.ext.web.client.WebClient;
  */
 public class ProxyChannelsVerticle extends AbstractVerticle {
 
-  private static final Logger logger = LogManager.getLogger();
+  private static final Logger logger = LoggerFactory.getLogger(ProxyChannelsVerticle.class);
 
   @Override
   public void start(Future<Void> startFuture) throws Exception {
@@ -33,7 +33,7 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
 
   private void onMessage(Message<String> message) {
     try {
-      logger.info("Getting channels for - CountryId: {}", message.body());
+      logger.info("Getting channels for - CountryId: " + message.body());
 
       // Query
       String queryString = QueryUtil.getChannels(message.body());
@@ -63,18 +63,17 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
             "/omnix_es/contentObjects/_search")
         .ssl(true).sendJson(jsonObj, response -> {
           if (response.succeeded()) {
-            logger.info("Call Omnix Succeed!. Response: {}", response.result().bodyAsString());
+            logger.info("Call Omnix Succeed!. Response: " + response.result().bodyAsString());
             resultObj.complete(response.result().bodyAsJsonObject());
           } else {
-            logger.error("Call Omnix Fail", response.cause());
+            logger.error("Call Omnix Fail" + response.cause());
             resultObj.fail(response.cause());
           }
         });
   }
 
   /**
-   * Method to handle the response from Omnix.
-   * It uses the json object
+   * Method to handle the response from Omnix. It uses the json object
    *
    * @param message: Message object used to reply the response from Omnix.
    * @return
@@ -93,15 +92,14 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
               .forEach(objHit2 -> resultJson
                   .add(((JsonObject) objHit2).getJsonObject("_source").getJsonObject("fields"))));
 
-      logger.info("Final ........size {}..........", resultJson.size());
+      logger.info("Final size " + resultJson.size());
       message.reply(resultJson);
     });
     return resultObj;
   }
 
   /**
-   * Method to handle the response from Omnix.
-   * It uses the JsonPath library.
+   * Method to handle the response from Omnix. It uses the JsonPath library.
    *
    * @param message: Message object used to reply the response from Omnix.
    * @return
@@ -115,7 +113,7 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
           "$.hits.hits[*].inner_hits.groups.hits.hits[*]._source.fields");
 
       JsonArray resultJson = new JsonArray(expectResp.toString());
-      logger.info("Expected {}", resultJson);
+      logger.info("Expected " + resultJson);
 
       message.reply(resultJson);
     });

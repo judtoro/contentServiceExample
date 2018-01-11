@@ -2,8 +2,6 @@ package com.fox.platform.cntsrvex.infra.hndlr;
 
 import java.util.Map;
 import java.util.Optional;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.fox.platform.cntsrvex.dom.ent.JsonFields;
 import com.fox.platform.cntsrvex.infra.exc.RequestException;
 import com.newrelic.agent.deps.org.apache.http.HttpStatus;
@@ -12,6 +10,8 @@ import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.json.EncodeException;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.RoutingContext;
 
 /**
@@ -23,7 +23,7 @@ import io.vertx.ext.web.RoutingContext;
  */
 public class HandlersChannelImpl {
 
-  private static Logger logger = LogManager.getLogger();
+  private static Logger logger = LoggerFactory.getLogger(HandlersChannelImpl.class);
 
   private Vertx vertx;
 
@@ -51,19 +51,22 @@ public class HandlersChannelImpl {
 
   /**
    * Get channel list
+   *
    * @param routingContext
    */
   public void getChannelsAle(RoutingContext routingContext) {
     try {
 
-      Optional<String> countryOpt = Optional.ofNullable(routingContext.request().getParam("countryId"));
-      String countryId = countryOpt.orElseThrow(() -> new RequestException(HttpStatus.SC_BAD_REQUEST, "Bad countryId code"));
-      logger.info("CountryId {}", countryId);
+      Optional<String> countryOpt =
+          Optional.ofNullable(routingContext.request().getParam("countryId"));
+      String countryId = countryOpt
+          .orElseThrow(() -> new RequestException(HttpStatus.SC_BAD_REQUEST, "Bad countryId code"));
+      logger.info("CountryId " + countryId);
 
       vertx.eventBus().send("get_channels_ale", countryId, resp -> {
 
         if (resp.succeeded()) {
-          logger.info("When print !!! {} ", resp.result().body());
+          logger.info("When print !!! " + resp.result().body());
           routingContext.response().setStatusCode(HttpStatus.SC_OK);
           routingContext.response().end(resp.result().body().toString());
         } else {
@@ -73,10 +76,10 @@ public class HandlersChannelImpl {
 
     } catch (RequestException e) {
       routingContext.response().setStatusCode(e.getCode())
-      .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
     } catch (Exception e) {
       routingContext.response().setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-      .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
 
     }
   }
@@ -84,16 +87,19 @@ public class HandlersChannelImpl {
   public void getChannelsJuan(RoutingContext routingContext) {
     try {
 
-      Optional<String> countryOpt = Optional.ofNullable(routingContext.request().getParam("countryId"));
-      String countryId = countryOpt.orElseThrow(() -> new RequestException(HttpStatus.SC_BAD_REQUEST, "Bad countryId code"));
-      logger.info("CountryId {}", countryId);
+      Optional<String> countryOpt =
+          Optional.ofNullable(routingContext.request().getParam("countryId"));
+      String countryId = countryOpt
+          .orElseThrow(() -> new RequestException(HttpStatus.SC_BAD_REQUEST, "Bad countryId code"));
+      logger.info("CountryId " + countryId);
 
       vertx.eventBus().send("get_channels_juan", countryId, resp -> {
 
         if (resp.succeeded()) {
-          logger.info("When print !!! {} ", resp.result().body());
+          logger.info("When print !!! " + resp.result().body());
           routingContext.response().setStatusCode(HttpStatus.SC_OK);
-          routingContext.response().end(getFields(new JsonObject(resp.result().body().toString())).toString());
+          routingContext.response()
+              .end(getFields(new JsonObject(resp.result().body().toString())).toString());
         } else {
           logger.error("Error trying to reach Omnix!", resp.cause());
         }
@@ -101,10 +107,10 @@ public class HandlersChannelImpl {
 
     } catch (RequestException e) {
       routingContext.response().setStatusCode(e.getCode())
-      .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
     } catch (Exception e) {
       routingContext.response().setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-      .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
+          .putHeader(HttpHeaders.CONTENT_TYPE, "text/plain").end(e.getMessage());
 
     }
   }
@@ -132,10 +138,9 @@ public class HandlersChannelImpl {
             .map(internalObject -> {
               JsonObject jsonInternalHit = (JsonObject) internalObject;
 
-              Map<String, Object> fieldsMap = jsonInternalHit
-                  .getJsonObject(JsonFields.SOURCE.getFieldName(), new JsonObject())
-                  .getJsonObject(JsonFields.FIELDS.getFieldName(), new JsonObject())
-                  .getMap();
+              Map<String, Object> fieldsMap =
+                  jsonInternalHit.getJsonObject(JsonFields.SOURCE.getFieldName(), new JsonObject())
+                      .getJsonObject(JsonFields.FIELDS.getFieldName(), new JsonObject()).getMap();
 
               return new JsonObject(fieldsMap);
             }).forEach(fields::add);
@@ -145,7 +150,6 @@ public class HandlersChannelImpl {
 
     } catch (Exception ex) {
       logger.error("Error when parse data from Elastic: " + json.encode(), ex);
-      // throw new MappingException(ex.getMessage(),ex);
     }
     return fields;
   }

@@ -1,11 +1,11 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
 import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.client.WebClient;
 
 /**
@@ -17,7 +17,7 @@ import io.vertx.ext.web.client.WebClient;
  */
 public class ProxyChannelsVerticleJuan extends AbstractVerticle {
 
-  private static final Logger logger = LogManager.getLogger();
+  private static final Logger logger = LoggerFactory.getLogger(ProxyChannelsVerticleJuan.class);
 
   @Override
   public void start(Future<Void> startFuture) throws Exception {
@@ -37,7 +37,7 @@ public class ProxyChannelsVerticleJuan extends AbstractVerticle {
 
   private void onMessage(Message<JsonObject> message) {
     try {
-      logger.info("Handling message. CountryId: {}.......", message.body());
+      logger.info("Handling message. CountryId: " + message.body());
 
       String jsonString =
           "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"type.description\":\"olympicschannel\"}},"
@@ -48,7 +48,7 @@ public class ProxyChannelsVerticleJuan extends AbstractVerticle {
               + "\":\"groups\",\"order\":\"asc\"}}]}";
 
       JsonObject json = new JsonObject(jsonString);
-      logger.info("Json: {}.......", json);
+      logger.info("Json: " + json);
 
       WebClient webclient = WebClient.create(vertx);
 
@@ -57,10 +57,9 @@ public class ProxyChannelsVerticleJuan extends AbstractVerticle {
               "/omnix_es/contentObjects/_search")
           .ssl(true).sendJson(json, response -> {
             if (response.succeeded()) {
-              logger.info("Call Omnix Succeede!. Response: {}", response.result().bodyAsString());
+              logger.info("Call Omnix Succeede!. Response: " + response.result().bodyAsString());
               message.reply(response.result().bodyAsJsonObject());
             } else {
-              // jsonResponse = null;
               logger.error("Call Omnix Fail", response.cause());
             }
           });

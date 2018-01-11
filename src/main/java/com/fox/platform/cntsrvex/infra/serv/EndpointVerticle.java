@@ -1,40 +1,43 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import com.fox.platform.cntsrvex.infra.hndlr.HandlersChannelImpl;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.web.Router;
 
 /**
+ * <pre>
  * Verticle exposing a REST api to get channels info from Omnix
  *
- *  1. Get channels (Alejandra implementation): /channels_ale?countryId={country}
- *  2. Get channels (Juan implementation): /channels_juan?countryId={country}
+ * 1. Get channels (Alejandra implementation): /channels_ale?countryId={country}
+ * 2. Get channels (Juan implementation): /channels_juan?countryId={country}
  *
- * @author juan.toro
- * @author alejandra.ramirez
+ * &#64;author juan.toro
+ * &#64;author alejandra.ramirez
+ * </pre>
  *
  */
 public class EndpointVerticle extends AbstractVerticle {
 
-  private static final Logger logger = LogManager.getLogger();
+  private static final Logger logger = LoggerFactory.getLogger(EndpointVerticle.class);
 
   @Override
   public void start(Future<Void> startFuture) throws Exception {
 
-    logger.debug("Start Http Server at port: {}", Integer.getInteger("http.port", 8080));
+    logger.debug("Start Http Server at port: " + Integer.getInteger("http.port", 8080));
 
     Router router = getRouter();
 
-    vertx.createHttpServer().requestHandler(router::accept).listen(Integer.getInteger("http.port", 8080), result -> {
-      if (result.succeeded()) {
-        startFuture.complete();
-      } else {
-        startFuture.fail(result.cause());
-      }
-    });
+    vertx.createHttpServer().requestHandler(router::accept)
+        .listen(Integer.getInteger("http.port", 8080), result -> {
+          if (result.succeeded()) {
+            startFuture.complete();
+          } else {
+            startFuture.fail(result.cause());
+          }
+        });
   }
 
   private Router getRouter() {
