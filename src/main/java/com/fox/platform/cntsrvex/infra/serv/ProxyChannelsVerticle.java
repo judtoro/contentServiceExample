@@ -54,7 +54,7 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
       // Result
       Future<JsonObject> resultObj = processResponse(message);
 
-      doPetition(jsonQuery, resultObj);
+      getChannelsFromCMS(jsonQuery, resultObj);
 
     } catch (Exception e) {
       logger.error("Error getting channels fields.", e);
@@ -67,7 +67,7 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
    * @param jsonObj: Json send whith the request.
    * @param resultObj: Future to handle the response.
    */
-  private void doPetition(JsonObject jsonObj, final Future<JsonObject> resultObj) {
+  private void getChannelsFromCMS(JsonObject jsonObj, final Future<JsonObject> resultObj) {
     WebClient webclient = WebClient.create(vertx);
 
     webclient.post(contentServiceExampleConfig.getOmnixPort(),
