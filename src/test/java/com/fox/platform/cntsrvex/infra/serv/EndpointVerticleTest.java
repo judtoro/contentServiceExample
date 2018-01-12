@@ -51,7 +51,7 @@ public class EndpointVerticleTest {
   /**
    * Method that restores the enviroment after all the tests are completed.
    *
-   * @param ctx
+   * @param ctx context
    */
   @After
   public void down(TestContext ctx) {
@@ -74,7 +74,7 @@ public class EndpointVerticleTest {
    * is NOT NULL
    * </pre>
    *
-   * @param cxt
+   * @param cxt context
    */
   @Test
   public void testRESTMethodsGoodCountryId(TestContext ctx) {
@@ -100,7 +100,7 @@ public class EndpointVerticleTest {
    * is NOT NULL
    * </pre>
    *
-   * @param cxt
+   * @param cxt context
    */
   @Test
   public void testRESTMethodsBadCountryId(TestContext ctx) {
@@ -126,7 +126,7 @@ public class EndpointVerticleTest {
    * is NOT NULL
    * </pre>
    *
-   * @param cxt
+   * @param cxt context
    */
   @Test
   public void testRESTMethodsWithoutCountry(TestContext ctx) {
@@ -150,6 +150,12 @@ public class EndpointVerticleTest {
     });
   }
 
+  /**
+   * Service invocation
+   * @param ctx context
+   * @param channelStr Connection string
+   * @param status Response
+   */
   private void testRESTMethods(TestContext ctx, String channelStr, int status) {
     Async async = ctx.async();
 
