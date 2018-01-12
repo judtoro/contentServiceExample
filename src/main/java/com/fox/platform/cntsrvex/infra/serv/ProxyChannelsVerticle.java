@@ -1,6 +1,8 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
+import com.fox.platform.cntsrvex.dom.ent.JsonFields;
 import com.fox.platform.cntsrvex.infra.util.QueryUtil;
+import com.newrelic.agent.deps.org.apache.http.HttpStatus;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
@@ -25,7 +27,7 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
   @Override
   public void start(Future<Void> startFuture) throws Exception {
 
-    vertx.eventBus().consumer("get_channels_ale", this::onMessage);
+    vertx.eventBus().consumer("get_channels", this::onMessage);
     startFuture.complete();
 
   }
@@ -82,17 +84,26 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
     final Future<JsonObject> resultObj = Future.future();
     resultObj.setHandler(result -> {
 
-      JsonArray resultJson = new JsonArray();
+      try {
+        JsonArray resultJson = new JsonArray();
 
-      JsonObject obj = result.result();
-      obj.getJsonObject("hits").getJsonArray("hits")
-          .forEach(objHit -> ((JsonObject) objHit).getJsonObject("inner_hits")
-              .getJsonObject("groups").getJsonObject("hits").getJsonArray("hits")
-              .forEach(objHit2 -> resultJson
-                  .add(((JsonObject) objHit2).getJsonObject("_source").getJsonObject("fields"))));
+        JsonObject obj = result.result();
+        obj.getJsonObject(JsonFields.HITS_OBJECT.getFieldName())
+            .getJsonArray(JsonFields.HITS_ARRAY.getFieldName()).forEach(
+                objHit -> ((JsonObject) objHit).getJsonObject(JsonFields.INNER_HITS.getFieldName())
+                    .getJsonObject(JsonFields.GROUPS.getFieldName())
+                    .getJsonObject(JsonFields.HITS_OBJECT.getFieldName())
+                    .getJsonArray(JsonFields.HITS_ARRAY.getFieldName())
+                    .forEach(objHit2 -> resultJson
+                        .add(((JsonObject) objHit2).getJsonObject(JsonFields.SOURCE.getFieldName())
+                            .getJsonObject(JsonFields.FIELDS.getFieldName()))));
 
-      logger.info("Final size " + resultJson.size());
-      message.reply(resultJson);
+        logger.info("Final size " + resultJson.size());
+        message.reply(resultJson);
+      } catch (Exception e) {
+        logger.error(e, e);
+        message.fail(HttpStatus.SC_NOT_IMPLEMENTED, "Transformation error");
+      }
     });
     return resultObj;
   }

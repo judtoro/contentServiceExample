@@ -52,8 +52,7 @@ public class EndpointVerticle extends AbstractVerticle {
     Guice.createInjector(new EndpointModule(vertx)).injectMembers(this);
 
     // Routes
-    router.get("/channels_ale").handler(handler::getChannelsAle);
-    router.get("/channels_juan").handler(handler::getChannelsJuan);
+    router.get("/channels").handler(handler::getChannels);
 
     return router;
   }

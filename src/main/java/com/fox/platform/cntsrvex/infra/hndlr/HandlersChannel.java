@@ -3,8 +3,7 @@ package com.fox.platform.cntsrvex.infra.hndlr;
 import io.vertx.ext.web.RoutingContext;
 
 /**
- * Interface that defines the methods of the
- * endpoint handlers implementation.
+ * Interface that defines the methods of the endpoint handlers implementation.
  *
  * @author juan.toro
  *
@@ -12,6 +11,5 @@ import io.vertx.ext.web.RoutingContext;
 public interface HandlersChannel {
 
 
-  public void getChannelsAle(RoutingContext routingContext);
-  public void getChannelsJuan(RoutingContext routingContext);
+  public void getChannels(RoutingContext routingContext);
 }
