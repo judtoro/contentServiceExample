@@ -21,5 +21,22 @@ public interface ContentServiceExampleConfig  extends ServiceConfig {
    */
   public int getOmnixPort();
 
+  /**
+   * Url to perform the elastic search
+   * @return
+   */
+  public String getOmnixUrl();
+
+  /**
+   * Url path
+   * @return
+   */
+  public String getOmnixPath();
+
+  /**
+   * Omnix payload
+   * @return
+   */
+  public String getOmnixRequestPayload();
 
 }

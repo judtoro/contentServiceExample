@@ -3,7 +3,6 @@ package com.fox.platform.cntsrvex.infra.serv;
 import com.fox.platform.cntsrvex.dom.ent.JsonFields;
 import com.fox.platform.cntsrvex.infra.conf.ContentServiceExampleConfig;
 import com.fox.platform.cntsrvex.infra.dep.ChannelsModule;
-import com.fox.platform.cntsrvex.infra.util.QueryUtil;
 import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.newrelic.agent.deps.org.apache.http.HttpStatus;
@@ -49,8 +48,8 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
       logger.info("Getting channels for - CountryId: " + message.body());
 
       // Query
-      String queryString = QueryUtil.getChannels(message.body());
-      JsonObject jsonQuery = new JsonObject(queryString);
+      JsonObject jsonQuery = new JsonObject(
+          getPayload(contentServiceExampleConfig.getOmnixRequestPayload(), message.body()));
 
       // Result
       Future<JsonObject> resultObj = processResponse(message);
@@ -71,9 +70,8 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
   private void doPetition(JsonObject jsonObj, final Future<JsonObject> resultObj) {
     WebClient webclient = WebClient.create(vertx);
 
-    webclient
-        .post(443, "search-omnix-services-sh2266ar6ket7lqcnhj3dpzccu.us-east-1.es.amazonaws.com",
-            "/omnix_es/contentObjects/_search")
+    webclient.post(contentServiceExampleConfig.getOmnixPort(),
+        contentServiceExampleConfig.getOmnixUrl(), contentServiceExampleConfig.getOmnixPath())
         .ssl(true).sendJson(jsonObj, response -> {
           if (response.succeeded()) {
             logger.info("Call Omnix Succeed!. Response: " + response.result().bodyAsString());
@@ -118,6 +116,18 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
       }
     });
     return resultObj;
+  }
+
+
+  /**
+   * Replaces the countryId token with the provided countryId.
+   *
+   * @param payload
+   * @param countryId
+   * @return
+   */
+  public String getPayload(String payload, String countryId) {
+    return payload.replace("${countryId}", countryId);
   }
 
 }

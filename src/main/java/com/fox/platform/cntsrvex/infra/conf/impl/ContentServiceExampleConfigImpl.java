@@ -12,11 +12,17 @@ public class ContentServiceExampleConfigImpl implements ContentServiceExampleCon
   private static final int DEFAULT_PORT = 8081;
   private static final String DEFAULT_ADDRESS = "get_channels";
   private static final int DEFAULT_OMNIX_PORT = 443;
+  private static final String DEFAULT_URL = "search-omnix-services-sh2266ar6ket7lqcnhj3dpzccu.us-east-1.es.amazonaws.com";
+  private static final String DEFAULT_URL_PATH = "/omnix_es/contentObjects/_search";
+  private static final String DEFAULT_PAYLOAD = "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"type.description\":\"olympicschannel\"}},{\"nested\":{\"path\":\"groups\",\"query\":{\"bool\":{\"must\":[{\"nested\":{\"path\":\"groups.feeds\",\"query\":{\"match\":{\"groups.feeds.countryId\":\"${countryId}\"}}}}]}},\"inner_hits\":{}}}]}},\"sort\":[{\"groups.fields.id.raw\":{\"nested_path\":\"groups\",\"order\":\"asc\"}}]}";
 
 
   private HttpServerOptions httpServerOptions;
   private String address;
   private int omnixPort;
+  private String omnixUrl;
+  private String omnixPath;
+  private String omnixRequestPayload;
 
 
   public ContentServiceExampleConfigImpl() {
@@ -25,6 +31,9 @@ public class ContentServiceExampleConfigImpl implements ContentServiceExampleCon
 
     this.address = DEFAULT_ADDRESS;
     this.omnixPort = DEFAULT_OMNIX_PORT;
+    this.omnixUrl = DEFAULT_URL;
+    this.omnixPath = DEFAULT_URL_PATH;
+    this.omnixRequestPayload = DEFAULT_PAYLOAD;
   }
 
   @Override
@@ -53,5 +62,35 @@ public class ContentServiceExampleConfigImpl implements ContentServiceExampleCon
   public void setOmnixPort(int omnixPort) {
     this.omnixPort = omnixPort;
   }
+
+  @Override
+  public String getOmnixUrl() {
+    return omnixUrl;
+  }
+
+  public void setOmnixUrl(String omnixUrl) {
+    this.omnixUrl = omnixUrl;
+  }
+
+  @Override
+  public String getOmnixPath() {
+    return omnixPath;
+  }
+
+  public void setOmnixPath(String omnixPath) {
+    this.omnixPath = omnixPath;
+  }
+
+  @Override
+  public String getOmnixRequestPayload() {
+    return omnixRequestPayload;
+  }
+
+  public void setOmnixRequestPayload(String omnixRequestPayload) {
+    this.omnixRequestPayload = omnixRequestPayload;
+  }
+
+
+
 
 }
