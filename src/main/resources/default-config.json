@@ -90,8 +90,7 @@
 			"sendBufferSize" : 4096,
 			"receiveBufferSize" : 4096
 		},
-    	"addressAle" : "get_channels_ale",
-    	"addressJuan" : "get_channels_juan",
+    	"address" : "get_channels",
     	"omnixPort" : 443,
     	"omnixUrl" : "search-omnix-services-sh2266ar6ket7lqcnhj3dpzccu.us-east-1.es.amazonaws.com",
     	"omnixPath" : "/omnix_es/contentObjects/_search",
