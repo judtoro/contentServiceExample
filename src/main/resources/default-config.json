@@ -83,7 +83,15 @@
         "updateConfigAddress" : "updateConfigAddress"
     
     },
-    "baseline" : {
-    	"port" : 8080
+    "contentServiceExample" : {
+    	"httpServerOptions" : {
+			"port": 8082,
+			"acceptBacklog" : 10000,
+			"sendBufferSize" : 4096,
+			"receiveBufferSize" : 4096
+		},
+    	"addressAle" : "get_channels_ale",
+    	"addressJuan" : "get_channels_juan",
+    	"omnixPort" : 443
     }
 }

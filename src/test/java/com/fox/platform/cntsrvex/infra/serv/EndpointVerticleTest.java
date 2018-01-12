@@ -1,11 +1,15 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
+import java.io.InputStream;
+import org.apache.commons.io.IOUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.newrelic.agent.deps.org.apache.http.HttpStatus;
+import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
 import io.vertx.ext.unit.Async;
@@ -19,7 +23,7 @@ public class EndpointVerticleTest {
   private static Logger log = LoggerFactory.getLogger(EndpointVerticleTest.class);
 
   private static Vertx vertx;
-  private int port = Integer.getInteger("http.port", 8080);
+  private int port;
 
   /**
    * Method that sets the necesary to perform the unit tests.
@@ -29,10 +33,21 @@ public class EndpointVerticleTest {
   @Before
   public void setUp(TestContext ctx) {
     log.info("Iniciando prueba");
+
+    JsonObject config = loadConfigFile();
+    DeploymentOptions options = new DeploymentOptions()
+        .setConfig(config);
+
+
+    port = config
+        .getJsonObject("contentServiceExample")
+        .getJsonObject("httpServerOptions")
+        .getInteger("port");
+
     vertx = Vertx.vertx();
-    vertx.deployVerticle(ProxyChannelsVerticleJuan.class.getName());
-    vertx.deployVerticle(ProxyChannelsVerticle.class.getName());
-    vertx.deployVerticle(EndpointVerticle.class.getName());
+    vertx.deployVerticle(ProxyChannelsVerticleJuan.class.getName(), options);
+    vertx.deployVerticle(ProxyChannelsVerticle.class.getName(), options);
+    vertx.deployVerticle(EndpointVerticle.class.getName(), options);
   }
 
   /**
@@ -107,6 +122,35 @@ public class EndpointVerticleTest {
             async.complete();
           });
         });
+  }
+
+
+  // Helper Methods to load Configuration file, and load Resource
+  private JsonObject loadConfigFile() {
+    return new JsonObject(loadResource(Resources.CONFIG));
+  }
+
+  private String loadResource(Resources resource) {
+    InputStream in = this.getClass().getResourceAsStream(resource.getPath());
+    try {
+      return IOUtils.toString(in, "UTF-8");
+    } catch (Exception ex) {
+      return "";
+    }
+  }
+
+  private enum Resources {
+    CONFIG("/default-config.json");
+
+    private String path;
+
+    Resources(String path) {
+      this.path = path;
+    }
+
+    String getPath() {
+      return path;
+    }
   }
 
 }

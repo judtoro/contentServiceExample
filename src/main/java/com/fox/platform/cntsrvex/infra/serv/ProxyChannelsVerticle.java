@@ -1,6 +1,10 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
+import com.fox.platform.cntsrvex.infra.conf.ContentServiceExampleConfig;
+import com.fox.platform.cntsrvex.infra.dep.ChannelsModule;
 import com.fox.platform.cntsrvex.infra.util.QueryUtil;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
@@ -17,15 +21,21 @@ import io.vertx.ext.web.client.WebClient;
  *
  * @author alejandra.ramirez
  *
+ *
  */
 public class ProxyChannelsVerticle extends AbstractVerticle {
 
   private static final Logger logger = LoggerFactory.getLogger(ProxyChannelsVerticle.class);
 
+  @Inject
+  private ContentServiceExampleConfig contentServiceExampleConfig;
+
   @Override
   public void start(Future<Void> startFuture) throws Exception {
 
-    vertx.eventBus().consumer("get_channels_ale", this::onMessage);
+    Guice.createInjector(new ChannelsModule(vertx, config())).injectMembers(this);
+
+    vertx.eventBus().consumer(contentServiceExampleConfig.getAddressAle(), this::onMessage);
     startFuture.complete();
 
   }

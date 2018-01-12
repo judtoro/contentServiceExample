@@ -2,6 +2,10 @@ package com.fox.platform.cntsrvex.infra.serv;
 
 import java.util.Map;
 import com.fox.platform.cntsrvex.dom.ent.JsonFields;
+import com.fox.platform.cntsrvex.infra.conf.ContentServiceExampleConfig;
+import com.fox.platform.cntsrvex.infra.dep.ChannelsModule;
+import com.google.inject.Guice;
+import com.google.inject.Inject;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Future;
 import io.vertx.core.eventbus.Message;
@@ -22,15 +26,20 @@ public class ProxyChannelsVerticleJuan extends AbstractVerticle {
 
   private static final Logger logger = LoggerFactory.getLogger(ProxyChannelsVerticleJuan.class);
 
+  @Inject
+  private ContentServiceExampleConfig contentServiceExampleConfig;
+
   @Override
   public void start(Future<Void> startFuture) throws Exception {
+
+    Guice.createInjector(new ChannelsModule(vertx, config())).injectMembers(this);
 
     Future<Void> future = Future.future();
     super.start(future);
 
     future.setHandler(handler -> {
       logger.info("Getting channels.......");
-      vertx.eventBus().consumer("get_channels_juan", this::onMessage);
+      vertx.eventBus().consumer(contentServiceExampleConfig.getAddressJuan(), this::onMessage);
       startFuture.complete();
 
     });
