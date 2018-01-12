@@ -38,14 +38,13 @@ public class EndpointVerticle extends AbstractConfigurationVerticle {
 
     Guice.createInjector(new ChannelsModule(vertx, config())).injectMembers(this);
 
-    logger.info("Start Http Server at port (default-config.json): " + contentServiceExampleConfig.getHttpServerOptions().getPort());
+    logger.info("Start Http Server at port (default-config.json): "
+        + contentServiceExampleConfig.getHttpServerOptions().getPort());
 
     Router router = getRouter();
 
     vertx.createHttpServer(contentServiceExampleConfig.getHttpServerOptions())
-      .requestHandler(router::accept)
-      .listen(
-          result -> {
+        .requestHandler(router::accept).listen(result -> {
           if (result.succeeded()) {
             startFuture.complete();
           } else {
@@ -57,10 +56,8 @@ public class EndpointVerticle extends AbstractConfigurationVerticle {
   private Router getRouter() {
     Router router = Router.router(vertx);
 
-
     // Routes
-    router.get("/channels_ale").handler(handler::getChannelsAle);
-    router.get("/channels_juan").handler(handler::getChannelsJuan);
+    router.get("/channels").handler(handler::getChannels);
 
     return router;
   }

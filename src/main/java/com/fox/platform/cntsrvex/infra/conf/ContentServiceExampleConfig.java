@@ -10,16 +10,10 @@ import com.fox.platform.lib.cfg.ServiceConfig;
 public interface ContentServiceExampleConfig  extends ServiceConfig {
 
   /**
-   * Event bus address for Alejandra implementation.
+   * Event bus address.
    * @return
    */
-  public String getAddressAle();
-
-  /**
-   * Event bus address for Juan implementation.
-   * @return
-   */
-  public String getAddressJuan();
+  public String getAddress();
 
   /**
    * Omnix elastic search port.
