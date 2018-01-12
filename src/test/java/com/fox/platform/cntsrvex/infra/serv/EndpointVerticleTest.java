@@ -37,13 +37,10 @@ public class EndpointVerticleTest {
     log.info("Iniciando prueba");
 
     JsonObject config = loadConfigFile();
-    DeploymentOptions options = new DeploymentOptions()
-        .setConfig(config);
+    DeploymentOptions options = new DeploymentOptions().setConfig(config);
 
 
-    port = config
-        .getJsonObject("contentServiceExample")
-        .getJsonObject("httpServerOptions")
+    port = config.getJsonObject("contentServiceExample").getJsonObject("httpServerOptions")
         .getInteger("port");
 
     vertx = Vertx.vertx();
@@ -143,7 +140,11 @@ public class EndpointVerticleTest {
     vertx.createHttpClient().getNow(port, "localhost", channelStr, response -> {
       ctx.assertEquals(response.statusCode(), HttpStatus.SC_OK);
       response.bodyHandler(body -> {
-        expected.accept(body);
+        try {
+          expected.accept(body);
+        } catch (Exception e) {
+          log.error("Body {" + body + "}", e);
+        }
         async.complete();
       });
     });
