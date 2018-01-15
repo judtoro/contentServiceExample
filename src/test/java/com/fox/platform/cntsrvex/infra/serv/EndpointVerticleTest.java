@@ -81,7 +81,7 @@ public class EndpointVerticleTest {
    */
   @Test
   public void testRESTMethodsGoodCountryId(TestContext ctx) {
-    String channelStr = "/channels?countryId='CO'";
+    String channelStr = "/channels?countryId=CO";
     Consumer<Buffer> expected = body -> {
       ctx.assertNotNull(body.toJsonArray());
       ctx.assertFalse(body.toJsonArray().isEmpty());
@@ -107,7 +107,7 @@ public class EndpointVerticleTest {
    */
   @Test
   public void testRESTMethodsBadCountryId(TestContext ctx) {
-    String channelStr = "/channels?countryId='O'";
+    String channelStr = "/channels?countryId=O";
     Consumer<Buffer> expected = body -> {
       ctx.assertNotNull(body.toJsonArray());
       ctx.assertTrue(body.toJsonArray().isEmpty());
@@ -133,7 +133,7 @@ public class EndpointVerticleTest {
    */
   @Test
   public void testRESTMethodsWithoutCountry(TestContext ctx) {
-    String channelStr = "/channels?country='CO";
+    String channelStr = "/channels?country=CO";
     testRESTMethods(ctx, channelStr, HttpStatus.SC_BAD_REQUEST);
   }
 

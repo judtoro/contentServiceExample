@@ -1,5 +1,6 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
+import org.apache.commons.text.StrSubstitutor;
 import com.fox.platform.cntsrvex.dom.ent.JsonFields;
 import com.fox.platform.cntsrvex.infra.conf.ContentServiceExampleConfig;
 import com.fox.platform.cntsrvex.infra.dep.ChannelsModule;
@@ -43,6 +44,10 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
 
   }
 
+  /**
+   * Prosses the received message trough the event bus.
+   * @param message
+   */
   private void onMessage(Message<String> message) {
     try {
       logger.info("Getting channels for - CountryId: " + message.body());
@@ -57,6 +62,7 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
       getChannelsFromCMS(jsonQuery, resultObj);
 
     } catch (Exception e) {
+      message.fail(500, "Error getting channels fields");
       logger.error("Error getting channels fields.", e);
     }
   }
@@ -127,7 +133,11 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
    * @return
    */
   public String getPayload(String payload, String countryId) {
-    return payload.replace("${countryId}", countryId);
+
+    JsonObject request = new JsonObject();
+    request.put(JsonFields.COUNTRY.getFieldName(), countryId);
+
+    return new StrSubstitutor(request.getMap()).replace(payload);
   }
 
 }

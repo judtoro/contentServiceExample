@@ -16,7 +16,8 @@ public enum JsonFields {
 	GROUPS("groups"),
 	FIELDS("fields"),
 	NAME("name"),
-    ID("id");
+    ID("id"),
+    COUNTRY("countryId");
 
 	private String fieldName;
 
