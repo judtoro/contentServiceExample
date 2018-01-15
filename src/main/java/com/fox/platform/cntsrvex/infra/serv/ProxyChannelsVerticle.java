@@ -35,7 +35,7 @@ public class ProxyChannelsVerticle extends AbstractVerticle {
   @Override
   public void start(Future<Void> startFuture) throws Exception {
 
-    Guice.createInjector(new ChannelsModule(vertx, config())).injectMembers(this);
+    Guice.createInjector(new ChannelsModule(config())).injectMembers(this);
 
     vertx.eventBus().consumer(contentServiceExampleConfig.getAddress(), this::onMessage);
 
