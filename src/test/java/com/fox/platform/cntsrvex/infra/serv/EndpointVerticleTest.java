@@ -45,7 +45,7 @@ public class EndpointVerticleTest {
 
     vertx = Vertx.vertx();
     vertx.deployVerticle(ProxyChannelsVerticle.class.getName(), options);
-    vertx.deployVerticle(EndpointVerticle.class.getName(), options);
+    vertx.deployVerticle(EndpointVerticle.class.getName(), options, ctx.asyncAssertSuccess());
   }
 
   /**
@@ -152,6 +152,7 @@ public class EndpointVerticleTest {
 
   /**
    * Service invocation
+   *
    * @param ctx context
    * @param channelStr Connection string
    * @param status Response
