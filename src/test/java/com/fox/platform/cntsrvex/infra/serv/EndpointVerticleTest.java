@@ -1,6 +1,9 @@
 package com.fox.platform.cntsrvex.infra.serv;
 
+import java.awt.geom.IllegalPathStateException;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.function.Consumer;
 import org.apache.commons.io.IOUtils;
 import org.junit.After;
@@ -28,9 +31,9 @@ public class EndpointVerticleTest {
   private int port;
 
   /**
-   * Method that sets the necesary to perform the unit tests.
+   * Method that sets the necessary to perform the unit tests.
    *
-   * @param ctx
+   * @param ctx TestContext
    */
   @Before
   public void setUp(TestContext ctx) {
@@ -144,6 +147,7 @@ public class EndpointVerticleTest {
           expected.accept(body);
         } catch (Exception e) {
           log.error("Body {" + body + "}", e);
+          ctx.fail(e);
         }
         async.complete();
       });
@@ -161,24 +165,28 @@ public class EndpointVerticleTest {
     Async async = ctx.async();
 
     vertx.createHttpClient().getNow(port, "localhost", channelStr, response -> {
-      ctx.assertEquals(response.statusCode(), status);
-      async.complete();
+      try {
+        ctx.assertEquals(response.statusCode(), status);
+        async.complete();
+      } catch (Exception e) {
+        ctx.fail(e);
+      }
     });
   }
 
 
   // Helper Methods to load Configuration file, and load Resource
   private JsonObject loadConfigFile() {
-    return new JsonObject(loadResource(Resources.CONFIG));
+    try {
+      return new JsonObject(loadResource(Resources.CONFIG));
+    } catch (Exception e) {
+      throw new IllegalPathStateException(Resources.CONFIG.path);
+    }
   }
 
-  private String loadResource(Resources resource) {
+  private String loadResource(Resources resource) throws IOException {
     InputStream in = this.getClass().getResourceAsStream(resource.getPath());
-    try {
-      return IOUtils.toString(in, "UTF-8");
-    } catch (Exception ex) {
-      return "";
-    }
+    return IOUtils.toString(in, StandardCharsets.UTF_8.name());
   }
 
   private enum Resources {
