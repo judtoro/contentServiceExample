@@ -39,4 +39,11 @@ public interface ContentServiceExampleConfig  extends ServiceConfig {
    */
   public String getOmnixRequestPayload();
 
+
+  /**
+   * Endpoint path
+   * @return
+   */
+  public String getPath();
+
 }

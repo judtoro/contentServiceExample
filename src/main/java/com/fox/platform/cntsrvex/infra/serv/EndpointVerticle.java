@@ -59,7 +59,7 @@ public class EndpointVerticle extends AbstractConfigurationVerticle {
     Router router = Router.router(vertx);
 
     // Routes
-    router.get("/channels").handler(this::getChannels);
+    router.get(contentServiceExampleConfig.getPath()).handler(this::getChannels);
 
     return router;
   }

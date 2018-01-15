@@ -15,6 +15,7 @@ public class ContentServiceExampleConfigImpl implements ContentServiceExampleCon
   private static final String DEFAULT_URL = "search-omnix-services-sh2266ar6ket7lqcnhj3dpzccu.us-east-1.es.amazonaws.com";
   private static final String DEFAULT_URL_PATH = "/omnix_es/contentObjects/_search";
   private static final String DEFAULT_PAYLOAD = "{\"query\":{\"bool\":{\"must\":[{\"term\":{\"type.description\":\"olympicschannel\"}},{\"nested\":{\"path\":\"groups\",\"query\":{\"bool\":{\"must\":[{\"nested\":{\"path\":\"groups.feeds\",\"query\":{\"match\":{\"groups.feeds.countryId\":\"${countryId}\"}}}}]}},\"inner_hits\":{}}}]}},\"sort\":[{\"groups.fields.id.raw\":{\"nested_path\":\"groups\",\"order\":\"asc\"}}]}";
+  private static final String DEFAULT_PATH = "/channels";
 
 
   private HttpServerOptions httpServerOptions;
@@ -23,6 +24,7 @@ public class ContentServiceExampleConfigImpl implements ContentServiceExampleCon
   private String omnixUrl;
   private String omnixPath;
   private String omnixRequestPayload;
+  private String path;
 
 
   public ContentServiceExampleConfigImpl() {
@@ -34,6 +36,7 @@ public class ContentServiceExampleConfigImpl implements ContentServiceExampleCon
     this.omnixUrl = DEFAULT_URL;
     this.omnixPath = DEFAULT_URL_PATH;
     this.omnixRequestPayload = DEFAULT_PAYLOAD;
+    this.path = DEFAULT_PATH;
   }
 
   @Override
@@ -90,7 +93,13 @@ public class ContentServiceExampleConfigImpl implements ContentServiceExampleCon
     this.omnixRequestPayload = omnixRequestPayload;
   }
 
+  @Override
+  public String getPath() {
+    return path;
+  }
 
-
+  public void setPath(String path) {
+    this.path = path;
+  }
 
 }
