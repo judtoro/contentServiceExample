@@ -9,7 +9,10 @@ import com.google.inject.Guice;
 import com.google.inject.Inject;
 import com.newrelic.agent.deps.org.apache.http.HttpStatus;
 import com.newrelic.agent.deps.org.apache.http.entity.ContentType;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
+import io.vertx.core.eventbus.Message;
 import io.vertx.core.http.HttpHeaders;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -69,32 +72,36 @@ public class EndpointVerticle extends AbstractConfigurationVerticle {
       String countryId = Optional.ofNullable(routingContext.request().getParam("countryId"))
           .orElseThrow(() -> new RequestException(HttpStatus.SC_BAD_REQUEST, "Bad countryId code"));
 
-
       logger.info("CountryId " + countryId);
 
-      vertx.eventBus().send(contentServiceExampleConfig.getAddress(), countryId, resp -> {
-
-        if (resp.succeeded()) {
-          logger.info("Result " + resp.result().body());
-          routingContext.response().setStatusCode(HttpStatus.SC_OK);
-          routingContext.response().end(resp.result().body().toString());
-        } else {
-          throw new RequestException(HttpStatus.SC_SERVICE_UNAVAILABLE,
-              "Error trying to reach Omnix");
-        }
-      });
+      vertx.eventBus().send(contentServiceExampleConfig.getAddress(), countryId,
+          replyCountryHandler(routingContext));
 
     } catch (RequestException e) {
-      logger.error("Error trying to reach Omnix!", e);
-      routingContext.response().setStatusCode(e.getCode())
-          .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
-          .end(e.getMessage());
+      setErrorResponse(routingContext, e, e.getCode());
     } catch (Exception e) {
-      logger.error("Error trying to reach Omnix!", e);
-      routingContext.response().setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
-          .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
-          .end(e.getMessage());
-
+      setErrorResponse(routingContext, e, HttpStatus.SC_INTERNAL_SERVER_ERROR);
     }
+  }
+
+  private Handler<AsyncResult<Message<Object>>> replyCountryHandler(RoutingContext routingContext) {
+    return resp -> {
+
+      if (resp.succeeded()) {
+        logger.info("Result " + resp.result().body());
+        routingContext.response().setStatusCode(HttpStatus.SC_OK);
+        routingContext.response().end(resp.result().body().toString());
+      } else {
+        throw new RequestException(HttpStatus.SC_SERVICE_UNAVAILABLE,
+            "Error trying to reach Omnix");
+      }
+    };
+  }
+
+  private void setErrorResponse(RoutingContext routingContext, Exception e, int code) {
+    logger.error("Error trying to reach Omnix!", e);
+    routingContext.response().setStatusCode(code)
+        .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
+        .end(e.getMessage());
   }
 }
