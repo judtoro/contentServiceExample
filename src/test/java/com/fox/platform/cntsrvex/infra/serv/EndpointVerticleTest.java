@@ -64,18 +64,18 @@ public class EndpointVerticleTest {
 
 
   /**
-   * <pre>
-   * Integration test with the Scenario
    *
-   * SCENARIO: UpdateLevelById
-   * GIVEN a valid countryId
-   * WHEN execute the call to channles endpoint
-   * THEN Return a json with the information of channels fields
+   * <b>Integration test with the Scenario</b><br>
+   * <br>
    *
-   * 1. test that the response
+   * <b>SCENARIO</b>: GoodCountry<br>
+   * <b>GIVEN</b> a valid countryId<br>
+   * <b>WHEN</b> execute the call to channles endpoint<br>
+   * <b>THEN</b> Return a json with the information of channels fields<br>
    *
-   * is NOT NULL
-   * </pre>
+   * <ul>
+   * <li>Test that the response is NOT NULL</li>
+   * </ul>
    *
    * @param cxt context
    */
@@ -90,18 +90,17 @@ public class EndpointVerticleTest {
   }
 
   /**
-   * <pre>
-   * Integration test with the Scenario
+   * <b>Integration test with the Scenario</b><br>
+   * <br>
    *
-   * SCENARIO: UpdateLevelById
-   * GIVEN a invalid countryId
-   * WHEN execute the call to channles endpoint
-   * THEN Return a json with the information of channels fields
+   * <b>SCENARIO</b>: BadCountry<br>
+   * <b>GIVEN</b> a invalid countryId<br>
+   * <b>WHEN</b> execute the call to channles endpoint<br>
+   * <b>THEN</b> Return a json with the information of channels fields<br>
    *
-   * 1. test that the response
-   *
-   * is NOT NULL
-   * </pre>
+   * <ul>
+   * <li>Test that the response is NOT NULL</li>
+   * </ul>
    *
    * @param cxt context
    */
@@ -116,18 +115,17 @@ public class EndpointVerticleTest {
   }
 
   /**
-   * <pre>
-   * Integration test with the Scenario
+   * <b>Integration test with the Scenario</b><br>
+   * <br>
    *
-   * SCENARIO: UpdateLevelById
-   * GIVEN without countryId and with other parameter
-   * WHEN execute the call to channles endpoint
-   * THEN Return a json with the information of channels fields
+   * <b>SCENARIO</b>: MissingCountry<br>
+   * <b>GIVEN</b> a missing countryId parameter<br>
+   * <b>WHEN</b> execute the call to channles endpoint<br>
+   * <b>THEN</b> Return a json with the information of channels fields<br>
    *
-   * 1. test that the response
-   *
-   * is NOT NULL
-   * </pre>
+   * <ul>
+   * <li>Test that the response is NOT NULL</li>
+   * </ul>
    *
    * @param cxt context
    */

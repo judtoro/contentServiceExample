@@ -17,15 +17,14 @@ import io.vertx.ext.web.Router;
 import io.vertx.ext.web.RoutingContext;
 
 /**
- * <pre>
  * Verticle exposing a REST api to get channels info from Omnix
  *
- * 1. Get channels (Alejandra implementation): /channels_ale?countryId={country}
- * 2. Get channels (Juan implementation): /channels_juan?countryId={country}
+ * <ul>
+ * <li>Get channels: /channels?countryId={country}</li>
+ * </ul>
  *
- * &#64;author juan.toro
- * &#64;author alejandra.ramirez
- * </pre>
+ * @author juan.toro
+ * @author alejandra.ramirez
  *
  */
 public class EndpointVerticle extends AbstractConfigurationVerticle {
@@ -80,16 +79,18 @@ public class EndpointVerticle extends AbstractConfigurationVerticle {
           routingContext.response().setStatusCode(HttpStatus.SC_OK);
           routingContext.response().end(resp.result().body().toString());
         } else {
-          logger.error("Error trying to reach Omnix!", resp.cause());
-          routingContext.response().setStatusCode(HttpStatus.SC_SERVICE_UNAVAILABLE).end();
+          throw new RequestException(HttpStatus.SC_SERVICE_UNAVAILABLE,
+              "Error trying to reach Omnix");
         }
       });
 
     } catch (RequestException e) {
+      logger.error("Error trying to reach Omnix!", e);
       routingContext.response().setStatusCode(e.getCode())
           .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
           .end(e.getMessage());
     } catch (Exception e) {
+      logger.error("Error trying to reach Omnix!", e);
       routingContext.response().setStatusCode(HttpStatus.SC_INTERNAL_SERVER_ERROR)
           .putHeader(HttpHeaders.CONTENT_TYPE, ContentType.TEXT_PLAIN.getMimeType())
           .end(e.getMessage());
