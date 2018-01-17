@@ -1,7 +1,5 @@
 # ContentServiceExample
 
-# BaselineVertx
-
 
 Microservice used as an example for the Ramp Up process.
 
