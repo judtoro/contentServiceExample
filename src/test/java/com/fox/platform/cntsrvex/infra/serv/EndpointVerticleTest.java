@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import com.newrelic.agent.deps.org.apache.http.HttpStatus;
 import io.vertx.core.DeploymentOptions;
+import io.vertx.core.Future;
 import io.vertx.core.Vertx;
 import io.vertx.core.buffer.Buffer;
 import io.vertx.core.json.JsonObject;
@@ -37,18 +38,46 @@ public class EndpointVerticleTest {
    */
   @Before
   public void setUp(TestContext ctx) {
-    log.info("Iniciando prueba");
-
     JsonObject config = loadConfigFile();
     DeploymentOptions options = new DeploymentOptions().setConfig(config);
-
 
     port = config.getJsonObject("contentServiceExample").getJsonObject("httpServerOptions")
         .getInteger("port");
 
+    Future<String> startFuture = Future.future();
     vertx = Vertx.vertx();
-    vertx.deployVerticle(ProxyChannelsVerticle.class.getName(), options);
-    vertx.deployVerticle(EndpointVerticle.class.getName(), options, ctx.asyncAssertSuccess());
+
+    // FORMA UNO
+    Future<String> proxyFuture = Future.future();
+    vertx.deployVerticle(ProxyChannelsVerticle.class.getName(), options, proxyFuture.completer());
+    proxyFuture.compose(v -> {
+      log.info("Deploying EndpointVerticle...");
+      vertx.deployVerticle(EndpointVerticle.class.getName(), options, startFuture.completer());
+    }, startFuture);
+
+    // FORMA DOS
+    // startFuture.<String>compose(v -> {
+    // log.info("Deploying ProxyChannelsVerticle...");
+    // Future<String> proxyFuture = Future.future();
+    // vertx.deployVerticle(ProxyChannelsVerticle.class.getName(), options,
+    // proxyFuture.completer());
+    // return proxyFuture;
+    // }).compose(v -> {
+    // log.info("Deploying EndpointVerticle...");
+    // vertx.deployVerticle(EndpointVerticle.class.getName(), options, startFuture.completer());
+    // }, startFuture);
+
+    // FORMA TRES
+    // startFuture.setHandler(overallResult -> {
+    // if (overallResult.succeeded()) {
+    // log.info("Context ready to test!!");
+    // startFuture.complete();
+    // } else {
+    // log.info("There was an error starting the context....");
+    // startFuture.complete();
+    // }
+    // });
+
   }
 
   /**
